@@ -1,32 +1,29 @@
 package wangbei.version1;
-
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
-import jxl.write.Label;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
-
 /**
- * 该类是用于解析上传的excel文件，excel文件中的内容是胜通的HMI的详细信息，excel文件的格式见详细文档说明 然后将其中的内容写入数据库中
- * 
- * @author LPL
- * 
+ * 该类是用于解析上传的excel文件，excel文件中的内容是基本是固定的，将解析后的数据进行初步处理后写入对应的文件中
+ * 由于写入excel文件中单元格数量有限制，因为输出的格式以CSV结尾，这样就可以克服内存的限制
+ * @author lvpenglin
+ *
  */
 public class ReadExcelToDB {
+	/**
+	 * 程序的入口
+	 * @param args
+	 * @throws Exception
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception, Exception {
 		File fileC = new File(
 				"C://Users//lvpenglin//Desktop//Computed_VARIAN-TRILOGY-1_6MV_Open00.xls");
@@ -39,6 +36,12 @@ public class ReadExcelToDB {
 		computedInfo(mapC, mapM, mapCX, mapMX);
 	}
 
+	/**
+	 * @param file 需要解析的excel文件路径
+	 * @return  返回解析文件中的Y轴的值，每一个数据段封装在一个map中
+	 * @throws BiffException
+	 * @throws IOException
+	 */
 	public static Map readExcel(File file) throws BiffException, IOException {
 		Workbook wb = Workbook.getWorkbook(file);// 从文件流中取得Excel工作区对象
 		// 开始遍历Excel工作区
@@ -89,6 +92,12 @@ public class ReadExcelToDB {
 		return map;
 	}
 
+	/**
+	 * @param file  需要解析的excel文件路径
+	 * @return  返回解析文件中的X轴的值，每一个数据段封装在一个map中
+	 * @throws BiffException
+	 * @throws IOException
+	 */
 	public static Map readExcelToXValue(File file) throws BiffException,
 			IOException {
 		Workbook wb = Workbook.getWorkbook(file);// 从文件流中取得Excel工作区对象
@@ -140,6 +149,14 @@ public class ReadExcelToDB {
 		return mapX;
 	}
 
+	/**
+	 * @param mapC  C情况下对应的Y的值
+	 * @param mapM  M情况下对应的Y的值
+	 * @param mapCX C情况下对应的X的值
+	 * @param mapMX M情况下对应的X的值
+	 * 核心的代码，对数据进行处理
+	 * @throws Exception
+	 */
 	public static void computedInfo(Map mapC, Map mapM, Map mapCX, Map mapMX)
 			throws Exception {
 		Iterator<Map.Entry<String, List>> itC = mapC.entrySet().iterator();
@@ -154,7 +171,6 @@ public class ReadExcelToDB {
 		List<Double> listLastCD = new ArrayList<Double>();
 		List<Double> listLastDE = new ArrayList<Double>();
 		List<Double> listLastEF = new ArrayList<Double>();
-
 		FileWriter fwprofile = new FileWriter(new File(
 				"C://Users//lvpenglin//Desktop//结果profile.csv"));
 		FileWriter fwpdd = new FileWriter(new File(
